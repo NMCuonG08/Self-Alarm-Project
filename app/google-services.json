@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "753464757515",
+    "project_id": "self-alarm",
+    "storage_bucket": "self-alarm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753464757515:android:562c76858b607213d4260e",
+        "android_client_info": {
+          "package_name": "hcmute.edu.vn.selfalarmproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR5HNhNAxkMGVbIWEJVpFJajtArjzERmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

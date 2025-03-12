@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#000000"
+    tools:context=".PlayMusic">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -23,16 +24,20 @@
             android:layout_width="409dp"
             android:layout_height="207dp"
             android:layout_marginBottom="1dp"
+            android:background="#000000"
+            android:backgroundTint="#000000"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/play_music" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
-            android:layout_width="408dp"
-            android:layout_height="325dp"
+            android:layout_width="396dp"
+            android:layout_height="335dp"
             app:circularflow_angles="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +60,7 @@
                 app:srcCompat="@drawable/shuffle" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/btn_songlist"
                 android:layout_width="50dp"
                 android:layout_height="49dp"
                 android:background="@drawable/circle_button"
@@ -71,7 +76,7 @@
                 app:srcCompat="@android:drawable/ic_dialog_map" />
 
             <ImageButton
-                android:id="@+id/imageButton8"
+                android:id="@+id/btnReset"
                 android:layout_width="50dp"
                 android:layout_height="49dp"
                 android:background="@drawable/circle_button"
@@ -79,7 +84,7 @@
                 app:circularflow_defaultRadius="20dp"
                 app:circularflow_radiusInDP="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton7"
+                app:layout_constraintEnd_toStartOf="@+id/btnPrevious"
                 app:layout_constraintHorizontal_bias="0.516"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -95,15 +100,15 @@
                 app:circularflow_defaultRadius="20dp"
                 app:circularflow_radiusInDP="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton6"
+                app:layout_constraintEnd_toStartOf="@+id/btnNext"
                 app:layout_constraintHorizontal_bias="0.892"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.698"
-                app:srcCompat="@android:drawable/ic_media_play" />
+                app:srcCompat="@android:drawable/ic_media_pause" />
 
             <ImageButton
-                android:id="@+id/imageButton6"
+                android:id="@+id/btnNext"
                 android:layout_width="50dp"
                 android:layout_height="49dp"
                 android:background="@drawable/circle_button"
@@ -119,7 +124,7 @@
                 app:srcCompat="@android:drawable/ic_media_next" />
 
             <ImageButton
-                android:id="@+id/imageButton7"
+                android:id="@+id/btnPrevious"
                 android:layout_width="50dp"
                 android:layout_height="49dp"
                 android:background="@drawable/circle_button"
@@ -145,15 +150,65 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.839" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="359dp"
+                android:layout_height="52dp"
+                app:layout_constraintBottom_toTopOf="@+id/seekBar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="73dp"
+                    android:layout_height="24dp"
+                    android:text="Đang phát:"
+                    android:textColor="#E4DFDF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.055"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.571" />
+
+                <TextView
+                    android:id="@+id/txtSong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="song"
+                    android:textColor="#DBD0D0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.094"
+                    app:layout_constraintStart_toEndOf="@+id/textView3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.484" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="406dp"
-        android:layout_height="66dp"
+        android:layout_width="409dp"
+        android:layout_height="58dp"
+        android:background="#715A5A"
+        android:backgroundTint="#000000"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="45dp"
+            android:layout_height="42dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.043"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

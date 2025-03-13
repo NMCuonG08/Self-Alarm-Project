@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-
+import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageButton btn_listen ;
+    ImageView imgOptimizeBattery;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -29,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        ImageView imgOptimizeBattery = findViewById(R.id.imageView5);
+        imgOptimizeBattery.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, BatteryOptimization.class);
+            startActivity(intent);
+        });
+
+
 
     }
 

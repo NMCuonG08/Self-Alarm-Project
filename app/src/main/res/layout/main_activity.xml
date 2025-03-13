@@ -60,7 +60,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.977"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView5"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_optimizeBattery"
                     app:layout_constraintVertical_bias="0.195" />
 
                 <TextView
@@ -130,7 +130,7 @@
                     app:srcCompat="@drawable/schedule" />
 
                 <ImageView
-                    android:id="@+id/imageView5"
+                    android:id="@+id/btn_optimizeBattery"
                     android:layout_width="182dp"
                     android:layout_height="178dp"
                     android:layout_marginBottom="30dp"

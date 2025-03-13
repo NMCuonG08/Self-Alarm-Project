@@ -32,6 +32,9 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
+        <activity android:name=".ManagePersonalScheduleActivity" />
     </application>
+
+
 
 </manifest>

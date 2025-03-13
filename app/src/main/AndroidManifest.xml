@@ -27,11 +27,13 @@
         </activity>
         <activity android:name=".PlayMusic"/>
         <activity android:name="SongListActivity"/>
+        <activity android:name=".BatteryOptimization"/>
         <service
             android:name=".Service.MusicService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
     </application>
+
 
 </manifest>

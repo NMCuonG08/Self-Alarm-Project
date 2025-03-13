@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    ImageButton btn_listen ;
+    ImageView imgOptimizeBattery;
     ImageButton btn_listen;
     ImageView img_schedule; // Changed to ImageView since it's imageView4 in XML
 
@@ -33,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        ImageView imgOptimizeBattery = findViewById(R.id.imageView5);
+        imgOptimizeBattery.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, BatteryOptimization.class);
+            startActivity(intent);
+        });
+
+
 
         // Open ManagePersonalSchedule Activity
         img_schedule.setOnClickListener(new View.OnClickListener() {

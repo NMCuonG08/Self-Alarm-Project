@@ -37,5 +37,6 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
         <activity android:name=".ManagePersonalScheduleActivity" />
+        <receiver android:name=".AlarmReceiver" android:exported="false"/>
     </application>
 </manifest>

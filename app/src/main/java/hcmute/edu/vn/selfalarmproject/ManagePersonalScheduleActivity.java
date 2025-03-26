@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class ManagePersonalScheduleActivity extends AppCompatActivity {
 
     private ImageView scheduleImage;

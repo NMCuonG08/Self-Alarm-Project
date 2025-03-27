@@ -28,12 +28,16 @@
         <activity android:name=".PlayMusic"/>
         <activity android:name="SongListActivity"/>
         <activity android:name=".BatteryOptimization"/>
+        <activity android:name=".ManagePersonalScheduleActivity"/>
+        <activity android:name=".ViewScheduleActivity"/>
+        <activity android:name=".AddEventActivity"/>
         <service
             android:name=".Service.MusicService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
+        <activity android:name=".ManagePersonalScheduleActivity" />
+        <receiver android:name=".AlarmReceiver" android:exported="false"/>
     </application>
-
 
 </manifest>

@@ -9,6 +9,7 @@
 
     <!-- Title Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/titleContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CA6565"
@@ -28,14 +29,13 @@
             app:layout_constraintStart_toStartOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Scrollable Content (Fixed) -->
+    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/titleContainer"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- ✅ Wrap everything inside a LinearLayout -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,4 +105,5 @@
                 android:layout_marginTop="16dp"/>
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

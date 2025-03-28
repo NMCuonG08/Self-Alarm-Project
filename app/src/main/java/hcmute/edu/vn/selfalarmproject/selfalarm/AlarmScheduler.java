@@ -1,4 +1,4 @@
-package hcmute.edu.vn.selalarm;
+package hcmute.edu.vn.selfalarmproject.selfalarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

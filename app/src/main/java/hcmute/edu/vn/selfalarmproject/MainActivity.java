@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgOptimizeBattery;
     ImageView img_schedule; // Changed to ImageView since it's imageView4 in XML
 
+    ImageView smsCall ;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,5 +50,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        smsCall = findViewById(R.id.smscall);
+
+        smsCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SMSCallActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

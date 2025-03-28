@@ -8,7 +8,6 @@ import android.util.Log;
 
 import java.util.Date;
 
-import hcmute.edu.vn.selfalarmproject.model.Call;
 import hcmute.edu.vn.selfalarmproject.util.CallLogUtils;
 
 public class CallReceiver extends BroadcastReceiver {

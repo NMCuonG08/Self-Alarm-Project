@@ -39,7 +39,7 @@ public class ManagePersonalScheduleActivity extends AppCompatActivity {
 
         // Setup RecyclerView
         taskData = new ArrayList<>();
-        taskAdapter = new TaskAdapter(taskData);
+        taskAdapter = new hcmute.edu.vn.selfalarmproject.TaskAdapter(taskData);
         taskList.setLayoutManager(new LinearLayoutManager(this));
         taskList.setAdapter(taskAdapter);
 

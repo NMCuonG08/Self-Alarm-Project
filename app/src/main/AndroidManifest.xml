@@ -50,6 +50,9 @@
         <activity android:name=".SMSListActivity"/>
         <activity android:name=".CallLogActivity"/>
 
+        <activity android:name=".ViewScheduleActivity"/>
+        <activity android:name=".AddEventActivity"/>
+
         <service
             android:name=".Service.MusicService"
             android:enabled="true"
@@ -68,8 +71,7 @@
             android:foregroundServiceType="phoneCall" />
 
 
-
+        <receiver android:name=".selfalarm.AlarmReceiver" android:exported="false"/>
     </application>
-
 
 </manifest>

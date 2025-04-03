@@ -82,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Add Event"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/holo_purple"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_marginTop="16dp"/>
 
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="View Schedule"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/holo_purple"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_marginTop="12dp"/>
 

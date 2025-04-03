@@ -1,358 +1,250 @@
 package hcmute.edu.vn.selfalarmproject.Receiver;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Telephony;
 import android.telephony.PhoneStateListener;
-import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
+import hcmute.edu.vn.selfalarmproject.CallLogActivity;
+import hcmute.edu.vn.selfalarmproject.database.DatabaseHelper;
 
 public class MessageCallService extends Service {
-
-    private static final int NOTIFICATION_ID = 1;
-    private static final String CHANNEL_ID = "message_call_service_channel";
     private static final String TAG = "MessageCallService";
-
-    private BroadcastReceiver smsReceiver;
-    private BroadcastReceiver callReceiver;
-    private TelephonyManager telephonyManager;
-    private PhoneStateListener phoneStateListener;
-    private boolean isReceiverRegistered = false;
+    private static final int NOTIFICATION_ID = 1000;
+    private static final String CHANNEL_ID = "sms_call_service_channel";
     
-    // Firebase references
-    private DatabaseReference smsReference;
-    private DatabaseReference callReference;
-
+    private TelephonyManager telephonyManager;
+    private CallStateListener phoneStateListener;
+    
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Khởi tạo Firebase Database
-        initFirebase();
+        Log.d(TAG, "MessageCallService - onCreate called");
         
-        // Tạo notification channel cho foreground service
+        // Create notification channel
         createNotificationChannel();
-
-        // Bắt đầu foreground service
+        
+        // Start foreground service
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, createNotification(),
+                startForeground(NOTIFICATION_ID, createNotification(), 
                         android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL);
             } else {
                 startForeground(NOTIFICATION_ID, createNotification());
             }
+            Log.d(TAG, "Service started in foreground");
             
-            // Đăng ký receivers
-            registerReceivers();
-            
-            // Đăng ký lắng nghe trạng thái cuộc gọi
+            // Register phone state listener
             setupCallStateListener();
             
         } catch (Exception e) {
-            Log.e(TAG, "Error in onCreate: " + e.getMessage());
+            Log.e(TAG, "Error starting service: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    // Khởi tạo Firebase
-    private void initFirebase() {
-        try {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            smsReference = database.getReference("messages");
-            callReference = database.getReference("calls");
-            Log.d(TAG, "Firebase initialized successfully");
-        } catch (Exception e) {
-            Log.e(TAG, "Error initializing Firebase: " + e.getMessage());
-            e.printStackTrace();
-        }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "MessageCallService - onStartCommand called");
+        return START_STICKY;
     }
-
+    
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceivers();
         
-        // Hủy đăng ký lắng nghe cuộc gọi
+        Log.d(TAG, "MessageCallService - onDestroy called");
+        
+        // Unregister phone state listener
         if (telephonyManager != null && phoneStateListener != null) {
             try {
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+                Log.d(TAG, "Phone state listener unregistered");
             } catch (Exception e) {
-                Log.e(TAG, "Error unregistering phone listener: " + e.getMessage());
+                Log.e(TAG, "Error unregistering phone state listener: " + e.getMessage());
             }
         }
     }
-
+    
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                NotificationChannel channel = new NotificationChannel(
-                        CHANNEL_ID,
-                        "Message and Call Service",
-                        NotificationManager.IMPORTANCE_HIGH); // Changed to HIGH for better notification visibility
-                
-                channel.setDescription("Handles SMS and call notifications");
-                channel.enableVibration(true);
-
-                NotificationManager manager = getSystemService(NotificationManager.class);
-                if (manager != null) {
-                    manager.createNotificationChannel(channel);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error creating notification channel: " + e.getMessage());
-                e.printStackTrace();
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "SMS and Call Service",
+                    NotificationManager.IMPORTANCE_HIGH);
+            
+            channel.setDescription("Dịch vụ theo dõi tin nhắn và cuộc gọi");
+            channel.enableVibration(true);
+            
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+                Log.d(TAG, "Notification channel created");
             }
         }
     }
-
+    
     private Notification createNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("SMS & Call Manager")
-                .setContentText("Đang chạy để xử lý tin nhắn và cuộc gọi")
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-        return builder.build();
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Dịch vụ SMS & Cuộc gọi")
+                .setContentText("Đang theo dõi tin nhắn và cuộc gọi")
+                .setSmallIcon(android.R.drawable.stat_sys_phone_call)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build();
     }
-
-    // Lắng nghe trạng thái cuộc gọi
+    
     private void setupCallStateListener() {
         try {
-            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            Log.d(TAG, "Setting up call state listener");
             
-            phoneStateListener = new PhoneStateListener() {
-                private String incomingNumber = "";
-                
-                @Override
-                public void onCallStateChanged(int state, String phoneNumber) {
-                    if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                        incomingNumber = phoneNumber;
-                    }
-                    
-                    switch (state) {
-                        case TelephonyManager.CALL_STATE_RINGING:
-                            // Cuộc gọi đến
-                            if (!incomingNumber.isEmpty()) {
-                                handleIncomingCall(incomingNumber);
-                            }
-                            break;
-                    }
-                }
-            };
+            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            phoneStateListener = new CallStateListener();
             
             if (telephonyManager != null) {
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-                Log.d(TAG, "Call state listener registered");
+                Log.d(TAG, "Phone state listener registered successfully");
+            } else {
+                Log.e(TAG, "TelephonyManager is null!");
             }
         } catch (Exception e) {
             Log.e(TAG, "Error setting up call state listener: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    private void registerReceivers() {
-        try {
-            // Đăng ký receiver cho SMS thực tế
-            smsReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    try {
-                        if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
-                            Bundle bundle = intent.getExtras();
-                            if (bundle != null) {
-                                // Lấy tin nhắn SMS từ intent
-                                SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-                                
-                                if (messages != null && messages.length > 0) {
-                                    String sender = messages[0].getOriginatingAddress();
-                                    StringBuilder messageBody = new StringBuilder();
-                                    
-                                    // Kết hợp các phần của tin nhắn nếu cần
-                                    for (SmsMessage sms : messages) {
-                                        messageBody.append(sms.getMessageBody());
-                                    }
-                                    
-                                    // Xử lý tin nhắn SMS
-                                    handleIncomingSMS(sender, messageBody.toString());
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error processing received SMS: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            };
+    
+    // Custom phone state listener class for better logging and debugging
+    private class CallStateListener extends PhoneStateListener {
+        private String lastPhoneNumber = "";
+        private boolean wasRinging = false;
+        
+        @Override
+        public void onCallStateChanged(int state, String phoneNumber) {
+            Log.d(TAG, "Call state changed: state=" + state + ", number=" + 
+                 (phoneNumber != null ? phoneNumber : "unknown"));
             
-            // Đăng ký nhận SMS thực tế
-            IntentFilter smsFilter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
-            smsFilter.setPriority(999); // Độ ưu tiên cao
-            registerReceiver(smsReceiver, smsFilter);
-            
-            // Vẫn giữ lại receiver cũ cho tin nhắn tùy chỉnh nếu cần
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    String sender = intent.getStringExtra("sender");
-                    String message = intent.getStringExtra("message");
-
-                    if (sender != null && message != null) {
-                        handleIncomingSMS(sender, message);
-                    }
-                }
-            }, new IntentFilter("SMS_RECEIVED_BROADCAST"));
-            
-            isReceiverRegistered = true;
-            Log.d(TAG, "SMS receivers registered successfully");
-        } catch (Exception e) {
-            Log.e(TAG, "Error registering receivers: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void unregisterReceivers() {
-        try {
-            if (isReceiverRegistered) {
-                if (smsReceiver != null) {
-                    unregisterReceiver(smsReceiver);
-                }
-
-                if (callReceiver != null) {
-                    unregisterReceiver(callReceiver);
-                }
-                
-                isReceiverRegistered = false;
-                Log.d(TAG, "Receivers unregistered successfully");
+            if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                lastPhoneNumber = phoneNumber;
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Error unregistering receivers: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    // Lưu tin nhắn vào Firebase
-    private void saveSMSToFirebase(String sender, String message) {
-        try {
-            String messageId = smsReference.push().getKey();
-            if (messageId != null) {
-                Map<String, Object> messageData = new HashMap<>();
-                messageData.put("sender", sender);
-                messageData.put("message", message);
-                messageData.put("timestamp", System.currentTimeMillis());
-                
-                smsReference.child(messageId).setValue(messageData)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, "SMS saved to Firebase successfully"))
-                    .addOnFailureListener(e -> Log.e(TAG, "Error saving SMS to Firebase: " + e.getMessage()));
+            
+            switch (state) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    wasRinging = true;
+                    handleIncomingCall(lastPhoneNumber);
+                    break;
+                    
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    Log.d(TAG, "Call is active (off hook)");
+                    break;
+                    
+                case TelephonyManager.CALL_STATE_IDLE:
+                    if (wasRinging) {
+                        Log.d(TAG, "Call ended or rejected");
+                        wasRinging = false;
+                    }
+                    break;
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Exception saving SMS to Firebase: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     
-    // Lưu cuộc gọi vào Firebase
-    private void saveCallToFirebase(String phoneNumber) {
-        try {
-            String callId = callReference.push().getKey();
-            if (callId != null) {
-                Map<String, Object> callData = new HashMap<>();
-                callData.put("phoneNumber", phoneNumber);
-                callData.put("timestamp", System.currentTimeMillis());
-                callData.put("type", "incoming");
-                
-                callReference.child(callId).setValue(callData)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Call saved to Firebase successfully"))
-                    .addOnFailureListener(e -> Log.e(TAG, "Error saving call to Firebase: " + e.getMessage()));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Exception saving call to Firebase: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void handleIncomingSMS(String sender, String message) {
-        try {
-            Log.d(TAG, "Received SMS from: " + sender);
-            
-            // Hiển thị notification với sound và vibration
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("Tin nhắn mới từ: " + sender)
-                    .setContentText(message)
-                    .setSmallIcon(android.R.drawable.ic_dialog_email)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
-                    .setAutoCancel(true);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                // Dùng timestamp làm notification ID để tránh ghi đè
-                notificationManager.notify((int) (System.currentTimeMillis() % Integer.MAX_VALUE), builder.build());
-            }
-            
-            // Lưu tin nhắn vào Firebase
-            saveSMSToFirebase(sender, message);
-            
-        } catch (Exception e) {
-            Log.e(TAG, "Error handling incoming SMS: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     private void handleIncomingCall(String phoneNumber) {
+        Log.d(TAG, "Handling incoming call: " + phoneNumber);
+        
+        // Only process if we have a valid phone number
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            Log.w(TAG, "Empty phone number, cannot process call");
+            return;
+        }
+        
+        // Save to SQLite instead of Firebase
+        saveCallToSQLite(phoneNumber);
+    }
+    
+    private void saveCallToSQLite(String phoneNumber) {
         try {
-            Log.d(TAG, "Received incoming call from: " + phoneNumber);
+            Log.d(TAG, "Saving call to SQLite: " + phoneNumber);
             
-            // Hiển thị notification với sound và vibration
+            // Get database helper
+            DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
+            
+            // Save call with current timestamp
+            long timestamp = System.currentTimeMillis();
+            long id = dbHelper.addCall(phoneNumber, timestamp, "incoming");
+            
+            if (id > 0) {
+                Log.d(TAG, "Call saved to SQLite successfully with ID: " + id);
+            } else {
+                Log.e(TAG, "Failed to save call to SQLite");
+            }
+            
+            // Always show notification regardless of save success
+            showCallNotification(phoneNumber);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Exception saving call to SQLite: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Show notification anyway
+            showCallNotification(phoneNumber);
+        }
+    }
+    
+    private void showCallNotification(String phoneNumber) {
+        try {
+            Log.d(TAG, "Showing call notification for: " + phoneNumber);
+            
+            // Create intent to open call log activity
+            Intent intent = new Intent(this, CallLogActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            
+            // Get default sound
+            Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            
+            // Build notification
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Cuộc gọi đến")
                     .setContentText("Từ số: " + phoneNumber)
-                    .setSmallIcon(android.R.drawable.ic_dialog_dialer)
+                    .setSmallIcon(android.R.drawable.stat_sys_phone_call)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .setCategory(NotificationCompat.CATEGORY_CALL)
+                    .setContentIntent(pendingIntent)
+                    .setSound(sound)
+                    .setVibrate(new long[]{0, 500, 200, 500})
                     .setAutoCancel(true);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            
+            // Show notification
+            int notificationId = (int) System.currentTimeMillis();
+            NotificationManager notificationManager = 
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            
             if (notificationManager != null) {
-                // Dùng timestamp làm notification ID để tránh ghi đè
-                notificationManager.notify((int) (System.currentTimeMillis() % Integer.MAX_VALUE), builder.build());
+                notificationManager.notify(notificationId, builder.build());
+                Log.d(TAG, "Call notification displayed with ID: " + notificationId);
             }
             
-            // Lưu cuộc gọi vào Firebase
-            saveCallToFirebase(phoneNumber);
-            
         } catch (Exception e) {
-            Log.e(TAG, "Error handling incoming call: " + e.getMessage());
+            Log.e(TAG, "Error showing call notification: " + e.getMessage());
             e.printStackTrace();
         }
     }

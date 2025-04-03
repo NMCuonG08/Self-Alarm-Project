@@ -46,12 +46,11 @@ public class CallManager {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     CallLogData callLog = new CallLogData();
-                    callLog.setId(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls._ID)));
-                    callLog.setNumber(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER)));
-                    callLog.setType(cursor.getInt(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE)));
+                    callLog.setId((int) cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls._ID)));
+                    callLog.setPhoneNumber(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER)));
+                    callLog.setType(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE))));
                     callLog.setDate(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE)));
-                    callLog.setDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION)));
-                    callLog.setName(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.CACHED_NAME)));
+
 
                     callLogs.add(callLog);
                 } while (cursor.moveToNext());

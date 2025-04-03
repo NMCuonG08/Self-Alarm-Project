@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".SMSCallActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -16,6 +16,32 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="24dp"/>
+
+    <!-- Status indicator for monitoring service -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#EAEAEA"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/presence_online" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Đang giám sát tin nhắn và cuộc gọi"
+            android:textStyle="italic"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -50,6 +76,15 @@
         android:text="Gửi tin nhắn"
         android:layout_marginBottom="24dp"/>
 
+    <!-- View history buttons -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lịch sử tin nhắn và cuộc gọi"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+        
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,26 +108,20 @@
             android:layout_marginStart="4dp"/>
     </LinearLayout>
 
+    <!-- Optional: Monitoring controls -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thực hiện cuộc gọi"
+        android:text="Điều khiển dịch vụ"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
 
-    <EditText
-        android:id="@+id/call_number_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nhập số điện thoại để gọi"
-        android:inputType="phone"
-        android:layout_marginBottom="8dp"/>
-
     <Button
-        android:id="@+id/call_btn"
+        android:id="@+id/toggle_service_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Gọi điện"/>
-
+        android:text="Dừng giám sát"
+        android:backgroundTint="#F44336"/>
+        
 </LinearLayout>

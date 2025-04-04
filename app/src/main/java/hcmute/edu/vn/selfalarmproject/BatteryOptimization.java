@@ -196,8 +196,23 @@ public class BatteryOptimization extends AppCompatActivity {
             batteryLevelText.setText(String.format("%.1f%%", batteryPct));
             batteryStatusText.setText(isCharging ? "Charging" : "Discharging");
             batteryTempText.setText(String.format("%d°C", temperature));
+
+            // Check if the battery level is below the low threshold
+            float lowBatteryThreshold = lowBatteryThresholdSlider.getValue();
+            if (batteryPct < lowBatteryThreshold) {
+                // Show toast to warn user about low battery
+                Toast.makeText(this, "Battery level is below the low threshold! Please charge your device.", Toast.LENGTH_LONG).show();
+            }
+
+            // Check for critical battery level
+            float criticalBatteryThreshold = criticalBatteryThresholdSlider.getValue();
+            if (batteryPct < criticalBatteryThreshold) {
+                // Show urgent warning toast
+                Toast.makeText(this, "Battery level is critically low! Please charge immediately!", Toast.LENGTH_LONG).show();
+            }
         }
     }
+
 
     private void startBatteryOptimizationService() {
         Intent serviceIntent = new Intent(this, BatteryOptimizationService.class);

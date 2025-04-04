@@ -263,7 +263,7 @@ public class BatteryOptimizationService extends Service {
                 this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         String batteryStatus = String.format("Battery: %.1f%% - %s",
-                batteryLevel, isCharging ? "Charging" : "Discharging");
+                batteryLevel, isCharging ? "Charging" : "Discharging","Full");
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Battery Optimization")
@@ -298,4 +298,3 @@ public class BatteryOptimizationService extends Service {
         return null;
     }
 }
-

@@ -46,6 +46,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("com.google.android.exoplayer:exoplayer:2.18.1")
-
+    implementation ("androidx.media:media:1.6.0")
 
 }
